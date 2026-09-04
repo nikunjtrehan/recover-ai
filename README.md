@@ -9,8 +9,8 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://python.org)
 [![Tests 47/47](https://img.shields.io/badge/Tests-47%2F47_passing-2ea44f)](tests/test_core.py)
 [![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Razorpay SDK](https://img.shields.io/badge/Razorpay-SDK_v1.4-072654?logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSIvPjx0ZXh0IHg9IjQiIHk9IjE4IiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSI+Ujwv dGV4dD48L3N2Zz4=)](https://razorpay.com)
-[![Gemini](https://img.shields.io/badge/LLM-Gemini_3.5_Flash-4285F4?logo=google&logoColor=white)](https://ai.google.dev)
+[![Razorpay](https://img.shields.io/badge/Razorpay-SDK_v1.4-072654)](https://razorpay.com)
+[![Gemini](https://img.shields.io/badge/Gemini-3.5_Flash-4285F4?logo=google&logoColor=white)](https://ai.google.dev)
 
 [Quick Start](#setup) · [Architecture](#architecture) · [Evaluation](#evaluation-results) · [Website](https://nikunjtrehan.github.io/recover-ai/)
 
