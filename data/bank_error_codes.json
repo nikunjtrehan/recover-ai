@@ -1,0 +1,131 @@
+{
+  "BAD_REQUEST_ERROR": {
+    "description": "The request was malformed or missing required fields",
+    "category": "terminal",
+    "retry_eligible": false,
+    "recommended_action": "escalate_to_human"
+  },
+  "GATEWAY_ERROR": {
+    "description": "Payment gateway encountered an error",
+    "category": "transient",
+    "retry_eligible": true,
+    "recommended_action": "retry_payment",
+    "optimal_retry_delay_minutes": 30
+  },
+  "SERVER_ERROR": {
+    "description": "Internal server error at payment processor",
+    "category": "transient",
+    "retry_eligible": true,
+    "recommended_action": "retry_payment",
+    "optimal_retry_delay_minutes": 15
+  },
+  "INSUFFICIENT_FUNDS": {
+    "description": "Customer's account has insufficient balance",
+    "category": "recoverable",
+    "retry_eligible": true,
+    "recommended_action": "send_payment_link",
+    "optimal_retry_delay_minutes": 1440,
+    "message_hint": "Suggest alternative payment method or retry after salary credit"
+  },
+  "CARD_EXPIRED": {
+    "description": "Customer's card has expired",
+    "category": "terminal",
+    "retry_eligible": false,
+    "recommended_action": "send_payment_link",
+    "message_hint": "Ask customer to update card details"
+  },
+  "CARD_DECLINED": {
+    "description": "Card was declined by the issuing bank",
+    "category": "recoverable",
+    "retry_eligible": true,
+    "recommended_action": "send_payment_link",
+    "optimal_retry_delay_minutes": 60,
+    "message_hint": "Suggest trying a different card or UPI"
+  },
+  "NETWORK_ERROR": {
+    "description": "Network connectivity issue during transaction",
+    "category": "transient",
+    "retry_eligible": true,
+    "recommended_action": "retry_payment",
+    "optimal_retry_delay_minutes": 5
+  },
+  "AUTHENTICATION_FAILED": {
+    "description": "OTP or 3DS authentication failed",
+    "category": "recoverable",
+    "retry_eligible": true,
+    "recommended_action": "send_payment_link",
+    "optimal_retry_delay_minutes": 10,
+    "message_hint": "Ask customer to retry with correct OTP"
+  },
+  "BANK_TIMEOUT": {
+    "description": "Bank did not respond within the timeout period",
+    "category": "transient",
+    "retry_eligible": true,
+    "recommended_action": "retry_payment",
+    "optimal_retry_delay_minutes": 30
+  },
+  "INVALID_VPA": {
+    "description": "UPI VPA (Virtual Payment Address) is invalid",
+    "category": "terminal",
+    "retry_eligible": false,
+    "recommended_action": "send_payment_link",
+    "message_hint": "Ask customer to provide a valid UPI ID"
+  },
+  "UPI_TIMEOUT": {
+    "description": "UPI transaction timed out waiting for customer approval",
+    "category": "transient",
+    "retry_eligible": true,
+    "recommended_action": "retry_payment",
+    "optimal_retry_delay_minutes": 15
+  },
+  "LIMIT_EXCEEDED": {
+    "description": "Transaction exceeds the daily/monthly limit",
+    "category": "recoverable",
+    "retry_eligible": true,
+    "recommended_action": "send_payment_link",
+    "optimal_retry_delay_minutes": 1440,
+    "message_hint": "Suggest splitting the payment or using a different method"
+  },
+  "ACCOUNT_CLOSED": {
+    "description": "Customer's bank account is closed",
+    "category": "terminal",
+    "retry_eligible": false,
+    "recommended_action": "escalate_to_human"
+  },
+  "DUPLICATE_TRANSACTION": {
+    "description": "A duplicate transaction was detected",
+    "category": "suspicious",
+    "retry_eligible": false,
+    "recommended_action": "escalate_to_human",
+    "message_hint": "Investigate for potential duplicate charge"
+  },
+  "FRAUD_SUSPECTED": {
+    "description": "Transaction flagged as potentially fraudulent",
+    "category": "suspicious",
+    "retry_eligible": false,
+    "recommended_action": "escalate_to_human",
+    "message_hint": "Requires manual review before any action"
+  },
+  "MANDATE_NOT_FOUND": {
+    "description": "Subscription mandate not found or expired",
+    "category": "recoverable",
+    "retry_eligible": false,
+    "recommended_action": "send_payment_link",
+    "message_hint": "Ask customer to re-authorize the subscription"
+  },
+  "NETBANKING_ERROR": {
+    "description": "Error with netbanking transaction",
+    "category": "transient",
+    "retry_eligible": true,
+    "recommended_action": "retry_payment",
+    "optimal_retry_delay_minutes": 30
+  },
+  "PAYMENT_CANCELLED": {
+    "description": "Payment was cancelled by the customer",
+    "category": "recoverable",
+    "retry_eligible": true,
+    "recommended_action": "send_payment_link",
+    "optimal_retry_delay_minutes": 60,
+    "message_hint": "Send a gentle reminder with payment link"
+  }
+}

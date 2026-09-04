@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RecoverAI — Payment Failure Recovery</title>
+<style>
+  /* Reset */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* Typography — system stack, no external fonts */
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1a1a1a;
+    background: #fafafa;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  code, pre, .mono {
+    font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+  }
+
+  /* Layout — single column, readable width */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+
+  /* Links */
+  a { color: #072654; text-decoration: underline; text-underline-offset: 3px; }
+  a:hover { color: #0a3a7d; }
+
+  /* Sections */
+  section { margin-bottom: 56px; }
+  section:last-child { margin-bottom: 0; }
+
+  /* Headings */
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    color: #072654;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #072654;
+    color: #072654;
+  }
+
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  p { margin-bottom: 16px; }
+
+  /* Subtitle */
+  .subtitle {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 4px;
+  }
+
+  .tagline {
+    font-size: 19px;
+    color: #333;
+    margin-bottom: 32px;
+    line-height: 1.5;
+  }
+
+  /* Divider */
+  hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 48px 0;
+  }
+
+  /* Nav links at top */
+  .nav {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    font-size: 14px;
+  }
+  .nav a {
+    color: #555;
+    text-decoration: none;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+  }
+  .nav a:hover { border-bottom-color: #072654; color: #072654; }
+
+  /* Stats row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .stat {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+  }
+  .stat-value {
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: #072654;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Architecture diagram */
+  .arch {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 24px;
+    overflow-x: auto;
+    margin: 24px 0;
+  }
+  .arch pre {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #333;
+    white-space: pre;
+  }
+
+  /* Code blocks */
+  pre.code-block {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 16px 0;
+  }
+
+  /* Message samples */
+  .message-sample {
+    background: #fff;
+    border-left: 3px solid #072654;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  .message-sample .lang {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 15px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  th {
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #666;
+    background: #f5f5f5;
+  }
+  td code {
+    background: #f0f0f0;
+    padding: 2px 6px;
+    font-size: 13px;
+  }
+
+  /* Callout */
+  .callout {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-left: 3px solid #072654;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-size: 15px;
+    color: #444;
+  }
+
+  /* List styling */
+  ul, ol {
+    margin: 12px 0;
+    padding-left: 24px;
+  }
+  li { margin-bottom: 8px; }
+
+  /* Footer */
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid #ddd;
+    font-size: 14px;
+    color: #888;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .container { padding: 32px 16px 48px; }
+    h1 { font-size: 24px; }
+    .stat-value { font-size: 22px; }
+    .arch pre { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <section>
+    <p class="subtitle">Razorpay AI Buildathon 2026 &mdash; Track 3</p>
+    <h1>RecoverAI</h1>
+    <p class="tagline">Automated payment failure recovery for Razorpay merchants. Classifies failures, picks the right action, sends a localized message. No LLM in the transaction path.</p>
+
+    <nav class="nav">
+      <a href="#problem">Problem</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#results">Results</a>
+      <a href="#decisions">Design Decisions</a>
+      <a href="#messages">Messages</a>
+      <a href="#limitations">Limitations</a>
+      <a href="https://github.com/nikunjtrehan/recover-ai" target="_blank">GitHub</a>
+      <a href="#video">Video</a>
+    </nav>
+  </section>
+
+  <!-- Who built this -->
+  <section>
+    <h2>Who built this</h2>
+    <p>
+      I'm Nikunj. I'm an ML/DL student. I built this because I looked at how payment failures are handled today and thought: this is a solved classification problem being treated as a customer service problem.
+    </p>
+    <p>
+      <!-- NIKUNJ: Replace this paragraph with your own words. Why did you pick Track 3? What made you care about this problem? One honest paragraph. -->
+      When a payment fails, the error code already tells you what went wrong. A UPI timeout is not the same as a stolen card. But most systems treat them identically: wait 3 days, send a generic email, hope the customer comes back. That's not recovery. That's resignation.
+    </p>
+  </section>
+
+  <hr>
+
+  <!-- Problem -->
+  <section id="problem">
+    <h2>The problem</h2>
+    <p>
+      Failed payments are not lost customers. They are recoverable revenue stuck behind two kinds of friction:
+    </p>
+    <ul>
+      <li><strong>Infrastructure friction</strong> &mdash; bank timeouts, gateway errors, UPI node downtime. These are transient. Retry in 30 minutes and they usually succeed.</li>
+      <li><strong>Liquidity friction</strong> &mdash; insufficient funds, expired cards, declined transactions. These need a different approach: a payment link with an alternative method, or routing to Razorpay PayLater.</li>
+    </ul>
+    <p>
+      Current solutions retry blindly (getting merchants flagged by card networks) or send generic English emails to Hinglish-speaking customers (single-digit open rates).
+    </p>
+  </section>
+
+  <!-- Results -->
+  <section id="results">
+    <h2>Measured results</h2>
+    <p>Run <code>python run_evaluation.py</code> to reproduce. Held-out test set, not cherry-picked.</p>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-value">100%</span>
+        <span class="stat-label">Classification accuracy</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">59.9%</span>
+        <span class="stat-label">Recovery rate</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">&lt;5ms</span>
+        <span class="stat-label">Hot-path latency</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">6/25</span>
+        <span class="stat-label">Honest exceptions</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      Recovery outcomes are simulated because Razorpay test mode cannot execute real retries. Classification and strategy selection are fully real. The 6 exceptions are terminal failures (hard card declines, insufficient funds) where no automated action would help. I report them instead of hiding them.
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Architecture -->
+  <section id="architecture">
+    <h2>Architecture</h2>
+    <p>The core decision: separate the fast path from the smart path.</p>
+
+    <div class="arch">
+<pre>Razorpay Webhook (payment.failed)
+        |
+        v
+FastAPI Server (server.py)                        &lt;5ms total
+        |
+        v
+RandomForest Classifier
+        |  category: transient | recoverable | terminal | suspicious
+        v
+Python Rules Engine (no LLM)
+        |  action: retry | payment_link | paylater | escalate
+        v
+Message Generator (English / Hindi / Hinglish)
+        |
+        v
+Razorpay Python SDK (test mode)
+        |
+        v
+SQLite Audit Trail
+        |
+        v  (async, runs daily)
+Offline LLM Optimizer (Gemini)
+        |  reads audit logs, rewrites message templates
+        v
+data/optimized_templates.json</pre>
+    </div>
+
+    <p>
+      The hot path is pure Python. No network calls except to Razorpay's own API. The LLM runs offline, reading yesterday's audit logs and rewriting Hinglish templates using behavioral economics nudges. Better templates get picked up by the hot path the next day.
+    </p>
+  </section>
+
+  <!-- Design decisions -->
+  <section id="decisions">
+    <h2>Why it's built this way</h2>
+
+    <h3>Why no LLM in the transaction path?</h3>
+    <p>Three reasons:</p>
+    <ol>
+      <li><strong>Availability.</strong> If your LLM provider goes down, your recovery pipeline goes down. Merchants lose money in real-time.</li>
+      <li><strong>Latency.</strong> An API call to Gemini takes 1-4 seconds. RandomForest inference takes &lt;1ms. The webhook response window is tight.</li>
+      <li><strong>Cost.</strong> At Rs 0.01-0.05 per call, 100K daily failures = Rs 1,000-5,000/day. The rules engine costs zero.</li>
+    </ol>
+
+    <h3>Why RandomForest, not deep learning?</h3>
+    <p>
+      The input is tabular: error code, payment method, amount, retry count. Four output categories. For tabular data with discrete features, tree-based models consistently beat neural networks. (Grinsztajn et al., NeurIPS 2022: "Why do tree-based models still outperform deep learning on tabular data?")
+    </p>
+
+    <h3>Why PayLater instead of micro-credit?</h3>
+    <p>
+      An earlier version offered "just-in-time micro-credit." I removed it. Issuing credit requires an NBFC license under RBI guidelines. Razorpay already has a PayLater product backed by licensed partners. Same outcome, zero regulatory risk.
+    </p>
+
+    <h3>What actions can the system take?</h3>
+    <table>
+      <tr><th>Action</th><th>When</th></tr>
+      <tr><td><code>retry_payment</code></td><td>Transient failures (timeouts, gateway errors)</td></tr>
+      <tr><td><code>send_payment_link</code></td><td>Recoverable failures, alternative payment method</td></tr>
+      <tr><td><code>offer_razorpay_paylater</code></td><td>Insufficient funds, high-LTV customer</td></tr>
+      <tr><td><code>escalate_to_human</code></td><td>Suspicious activity, exceeded retry limits</td></tr>
+      <tr><td><code>no_action</code></td><td>Terminal failures (account closed, fraud flagged)</td></tr>
+    </table>
+    <p>
+      Any output not in this list is rejected and falls back to <code>escalate_to_human</code>. Enforced in code, not by prompting.
+    </p>
+  </section>
+
+  <hr>
+
+  <!-- Messages -->
+  <section id="messages">
+    <h2>Recovery messages</h2>
+    <p>Messages are generated in the customer's preferred language. Here are real outputs from the evaluation run:</p>
+
+    <div class="message-sample">
+      <div class="lang">Hinglish &mdash; Card declined</div>
+      Hi Rahul! Aapka Rs 1,849 ka payment process nahi ho paya. Koi baat nahi &mdash; is link se payment complete karein.
+    </div>
+
+    <div class="message-sample">
+      <div class="lang">English &mdash; Bank timeout</div>
+      Hi Rekha! Your payment of Rs 16,282 couldn't be processed. No worries &mdash; here's a new payment link to complete your purchase.
+    </div>
+
+    <div class="message-sample">
+      <div class="lang">Hindi &mdash; Gateway error</div>
+      Namaste Manoj! Aapka Rs 2,174 ka bhugtan asthaayi samasya ke kaaran nahi ho paaya. Chinta na karein &mdash; hum swachalit roop se punah prayaas kar rahe hain.
+    </div>
+  </section>
+
+  <!-- Safety -->
+  <section>
+    <h2>Safety and compliance</h2>
+    <ul>
+      <li><strong>Bounded actions</strong> &mdash; hard-coded whitelist. The system cannot hallucinate a refund or issue credit.</li>
+      <li><strong>Escalation chain</strong> &mdash; retry, then payment link, then PayLater, then human. Cannot be skipped.</li>
+      <li><strong>Stopping rules</strong> &mdash; max 3 retries, 4-hour cooldown, max 3 customer touchpoints.</li>
+      <li><strong>Suspicious payments</strong> &mdash; always escalated to human. No automated retry.</li>
+      <li><strong>Audit trail</strong> &mdash; every decision logged to SQLite with payment_id, action, reasoning, confidence, timestamp.</li>
+    </ul>
+  </section>
+
+  <hr>
+
+  <!-- Limitations -->
+  <section id="limitations">
+    <h2>Limitations</h2>
+    <ol>
+      <li>Recovery outcomes are simulated. Razorpay test mode cannot execute real retries.</li>
+      <li>Classifier uses a lookup table (100% accurate for known codes). A trained ML model would handle ambiguous edge cases better.</li>
+      <li>SQLite won't scale past ~100 concurrent writes. Production needs PostgreSQL.</li>
+      <li>Single-process server. Production needs worker processes behind a load balancer.</li>
+      <li>70 synthetic training transactions. Production needs thousands of real failure logs.</li>
+    </ol>
+  </section>
+
+  <!-- Video -->
+  <section id="video">
+    <h2>Demo video</h2>
+    <p>
+      <!-- Replace with actual video link -->
+      <em>5-minute walkthrough coming soon. Will cover: problem statement, architecture walkthrough, live evaluation run, Streamlit dashboard demo, and path to production.</em>
+    </p>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>Built by Nikunj for the Razorpay AI Buildathon 2026, Track 3: AI Revenue Recovery.</p>
+    <p>
+      <a href="https://github.com/nikunjtrehan/recover-ai">Source code</a> &middot;
+      <a href="docs/architecture_and_defense.md">Architecture document</a>
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>

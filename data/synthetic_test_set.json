@@ -1,0 +1,430 @@
+[
+  {
+    "payment_id": "pay_test_b0ff62332a0641",
+    "order_id": "order_test_655d9b351ca648",
+    "amount": 1849,
+    "currency": "INR",
+    "method": "card",
+    "error_code": "CARD_DECLINED",
+    "error_description": "Card was declined by the issuing bank",
+    "customer": {
+      "name": "Aditya Verma",
+      "email": "aditya.verma33@hotmail.com",
+      "phone": "+916866853643",
+      "language_pref": "hinglish"
+    },
+    "created_at": "2026-08-04T04:05:14.968764+00:00",
+    "retry_count": 1
+  },
+  {
+    "payment_id": "pay_test_215bffbd558748",
+    "order_id": "order_test_9fc12524f42e47",
+    "amount": 16282,
+    "currency": "INR",
+    "method": "netbanking",
+    "error_code": "BANK_TIMEOUT",
+    "error_description": "Bank did not respond within the timeout period",
+    "customer": {
+      "name": "Rekha Ahluwalia",
+      "email": "rekha.ahluwalia10@yahoo.com",
+      "phone": "+917379930353",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-04T15:04:44.968790+00:00",
+    "retry_count": 3,
+    "subscription_id": "sub_test_acad78617d7045"
+  },
+  {
+    "payment_id": "pay_test_8b968e6f24a84d",
+    "order_id": "order_test_99158a61d61246",
+    "amount": 2174,
+    "currency": "INR",
+    "method": "netbanking",
+    "error_code": "NETWORK_ERROR",
+    "error_description": "Network connectivity issue during transaction",
+    "customer": {
+      "name": "Manoj Naidu",
+      "email": "manoj.naidu72@gmail.com",
+      "phone": "+916782515384",
+      "language_pref": "hindi"
+    },
+    "created_at": "2026-08-29T00:36:53.968819+00:00",
+    "retry_count": 2
+  },
+  {
+    "payment_id": "pay_test_fa3c407fbb4342",
+    "order_id": "order_test_b998d2f926fa46",
+    "amount": 241,
+    "currency": "INR",
+    "method": "card",
+    "error_code": "GATEWAY_ERROR",
+    "error_description": "Payment gateway encountered an error",
+    "customer": {
+      "name": "Srinivas Chauhan",
+      "email": "srinivas.chauhan91@yahoo.com",
+      "phone": "+919105696061",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-17T00:20:53.968844+00:00",
+    "retry_count": 3
+  },
+  {
+    "payment_id": "pay_test_ecc701017b694d",
+    "order_id": "order_test_f9ca3d0689124d",
+    "amount": 16242,
+    "currency": "INR",
+    "method": "card",
+    "error_code": "CARD_DECLINED",
+    "error_description": "Card was declined by the issuing bank",
+    "customer": {
+      "name": "Swati Sharma",
+      "email": "swati.sharma82@yahoo.in",
+      "phone": "+919380286670",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-09T11:45:44.968870+00:00",
+    "retry_count": 0
+  },
+  {
+    "payment_id": "pay_test_cbf0c43e69b546",
+    "order_id": "order_test_63f3204fbec84c",
+    "amount": 4563,
+    "currency": "INR",
+    "method": "card",
+    "error_code": "GATEWAY_ERROR",
+    "error_description": "Payment gateway encountered an error",
+    "customer": {
+      "name": "Radha Naidu",
+      "email": "radha.naidu34@yahoo.in",
+      "phone": "+917207836589",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-16T03:53:50.968896+00:00",
+    "retry_count": 0,
+    "subscription_id": "sub_test_9c836c67ef2842"
+  },
+  {
+    "payment_id": "pay_test_f58e030ba1a84e",
+    "order_id": "order_test_9959c48c73fa4f",
+    "amount": 893,
+    "currency": "INR",
+    "method": "wallet",
+    "error_code": "GATEWAY_ERROR",
+    "error_description": "Payment gateway encountered an error",
+    "customer": {
+      "name": "Sanjay Gupta",
+      "email": "sanjay.gupta25@rediffmail.com",
+      "phone": "+918021077511",
+      "language_pref": "hinglish"
+    },
+    "created_at": "2026-08-07T13:29:42.968926+00:00",
+    "retry_count": 3
+  },
+  {
+    "payment_id": "pay_test_3a38f98f3b9f43",
+    "order_id": "order_test_d6c29ee3278049",
+    "amount": 5398,
+    "currency": "INR",
+    "method": "card",
+    "error_code": "GATEWAY_ERROR",
+    "error_description": "Payment gateway encountered an error",
+    "customer": {
+      "name": "Prabhu Desai",
+      "email": "prabhu.desai37@hotmail.com",
+      "phone": "+917704297773",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-25T17:57:21.968954+00:00",
+    "retry_count": 1
+  },
+  {
+    "payment_id": "pay_test_13e2278a62cb43",
+    "order_id": "order_test_fea2003e5fdf40",
+    "amount": 768,
+    "currency": "INR",
+    "method": "wallet",
+    "error_code": "AUTHENTICATION_FAILED",
+    "error_description": "OTP or 3DS authentication failed",
+    "customer": {
+      "name": "Nitin Natarajan",
+      "email": "nitin.natarajan79@gmail.com",
+      "phone": "+918981353732",
+      "language_pref": "hindi"
+    },
+    "created_at": "2026-08-27T05:27:20.968980+00:00",
+    "retry_count": 0
+  },
+  {
+    "payment_id": "pay_test_3ae65370c98f4f",
+    "order_id": "order_test_98047230bd6647",
+    "amount": 967,
+    "currency": "INR",
+    "method": "card",
+    "error_code": "FRAUD_SUSPECTED",
+    "error_description": "Transaction flagged as potentially fraudulent",
+    "customer": {
+      "name": "Sai Jain",
+      "email": "sai.jain61@hotmail.com",
+      "phone": "+916841517522",
+      "language_pref": "hindi"
+    },
+    "created_at": "2026-08-04T04:51:36.969011+00:00",
+    "retry_count": 3
+  },
+  {
+    "payment_id": "pay_test_f7e5a16d23a64f",
+    "order_id": "order_test_230c7066a62e4b",
+    "amount": 439,
+    "currency": "INR",
+    "method": "card",
+    "error_code": "CARD_EXPIRED",
+    "error_description": "Customer's card has expired",
+    "customer": {
+      "name": "Nitin Chopra",
+      "email": "nitin.chopra38@yahoo.com",
+      "phone": "+917293792599",
+      "language_pref": "hinglish"
+    },
+    "created_at": "2026-08-31T20:25:34.969038+00:00",
+    "retry_count": 3
+  },
+  {
+    "payment_id": "pay_test_67ab1560b54044",
+    "order_id": "order_test_b3bc607e4a054b",
+    "amount": 1178,
+    "currency": "INR",
+    "method": "card",
+    "error_code": "INVALID_VPA",
+    "error_description": "UPI VPA (Virtual Payment Address) is invalid",
+    "customer": {
+      "name": "Vivaan Chowdary",
+      "email": "vivaan.chowdary33@hotmail.com",
+      "phone": "+919004557662",
+      "language_pref": "hinglish"
+    },
+    "created_at": "2026-08-30T05:36:58.969067+00:00",
+    "retry_count": 3
+  },
+  {
+    "payment_id": "pay_test_e856742da8af43",
+    "order_id": "order_test_88e100b76b6044",
+    "amount": 779,
+    "currency": "INR",
+    "method": "upi",
+    "error_code": "INSUFFICIENT_FUNDS",
+    "error_description": "Customer's account has insufficient balance",
+    "customer": {
+      "name": "Venkatesh Bose",
+      "email": "venkatesh.bose46@yahoo.com",
+      "phone": "+917563502288",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-14T21:53:09.969094+00:00",
+    "retry_count": 2
+  },
+  {
+    "payment_id": "pay_test_00f6e8475f224b",
+    "order_id": "order_test_e057834ea93c42",
+    "amount": 795,
+    "currency": "INR",
+    "method": "card",
+    "error_code": "GATEWAY_ERROR",
+    "error_description": "Payment gateway encountered an error",
+    "customer": {
+      "name": "Priya Raman",
+      "email": "priya.raman25@yahoo.com",
+      "phone": "+918645535874",
+      "language_pref": "telugu"
+    },
+    "created_at": "2026-08-09T07:08:19.969122+00:00",
+    "retry_count": 2
+  },
+  {
+    "payment_id": "pay_test_f50ab169ac0d43",
+    "order_id": "order_test_983d3bab4c5a4c",
+    "amount": 1728,
+    "currency": "INR",
+    "method": "upi",
+    "error_code": "INSUFFICIENT_FUNDS",
+    "error_description": "Customer's account has insufficient balance",
+    "customer": {
+      "name": "Navya Bansal",
+      "email": "navya.bansal22@yahoo.in",
+      "phone": "+919498257153",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-24T16:18:12.969148+00:00",
+    "retry_count": 2
+  },
+  {
+    "payment_id": "pay_test_52024e9fdd224c",
+    "order_id": "order_test_41394aa2843544",
+    "amount": 999,
+    "currency": "INR",
+    "method": "upi",
+    "error_code": "ACCOUNT_CLOSED",
+    "error_description": "Customer's bank account is closed",
+    "customer": {
+      "name": "Diya Pillai",
+      "email": "diya.pillai23@rediffmail.com",
+      "phone": "+919883368183",
+      "language_pref": "hindi"
+    },
+    "created_at": "2026-08-20T23:00:10.969173+00:00",
+    "retry_count": 3
+  },
+  {
+    "payment_id": "pay_test_e0fba3d828ba4f",
+    "order_id": "order_test_03b6c61f10284c",
+    "amount": 3353,
+    "currency": "INR",
+    "method": "netbanking",
+    "error_code": "INVALID_VPA",
+    "error_description": "UPI VPA (Virtual Payment Address) is invalid",
+    "customer": {
+      "name": "Aditya Deshpande",
+      "email": "aditya.deshpande69@rediffmail.com",
+      "phone": "+917800236862",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-18T00:50:09.969200+00:00",
+    "retry_count": 3
+  },
+  {
+    "payment_id": "pay_test_a34d44077bb74b",
+    "order_id": "order_test_9c28341a94044a",
+    "amount": 1254,
+    "currency": "INR",
+    "method": "upi",
+    "error_code": "INSUFFICIENT_FUNDS",
+    "error_description": "Customer's account has insufficient balance",
+    "customer": {
+      "name": "Ashish Srivastava",
+      "email": "ashish.srivastava90@rediffmail.com",
+      "phone": "+917964721110",
+      "language_pref": "hinglish"
+    },
+    "created_at": "2026-08-04T02:56:31.969226+00:00",
+    "retry_count": 2
+  },
+  {
+    "payment_id": "pay_test_dbc2a99846094a",
+    "order_id": "order_test_918b87e4d82441",
+    "amount": 688,
+    "currency": "INR",
+    "method": "netbanking",
+    "error_code": "NETBANKING_ERROR",
+    "error_description": "Error with netbanking transaction",
+    "customer": {
+      "name": "Rohan Desai",
+      "email": "rohan.desai68@rediffmail.com",
+      "phone": "+919121798573",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-15T03:25:18.969252+00:00",
+    "retry_count": 0
+  },
+  {
+    "payment_id": "pay_test_fca1f341d39e45",
+    "order_id": "order_test_8f5532bcb2c14d",
+    "amount": 3600,
+    "currency": "INR",
+    "method": "upi",
+    "error_code": "BANK_TIMEOUT",
+    "error_description": "Bank did not respond within the timeout period",
+    "customer": {
+      "name": "Amit Nair",
+      "email": "amit.nair10@outlook.com",
+      "phone": "+918569845695",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-15T10:50:10.969280+00:00",
+    "retry_count": 2
+  },
+  {
+    "payment_id": "pay_test_dd324e4166aa4b",
+    "order_id": "order_test_090f9f62f4434e",
+    "amount": 1364,
+    "currency": "INR",
+    "method": "netbanking",
+    "error_code": "GATEWAY_ERROR",
+    "error_description": "Payment gateway encountered an error",
+    "customer": {
+      "name": "Avni Mishra",
+      "email": "avni.mishra47@rediffmail.com",
+      "phone": "+918503986528",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-19T19:04:00.969306+00:00",
+    "retry_count": 0
+  },
+  {
+    "payment_id": "pay_test_b1b5cc04a45748",
+    "order_id": "order_test_50babfdb9aae4e",
+    "amount": 17056,
+    "currency": "INR",
+    "method": "card",
+    "error_code": "SERVER_ERROR",
+    "error_description": "Internal server error at payment processor",
+    "customer": {
+      "name": "Nidhi Deshpande",
+      "email": "nidhi.deshpande99@yahoo.com",
+      "phone": "+917184682726",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-09T14:12:59.969332+00:00",
+    "retry_count": 0
+  },
+  {
+    "payment_id": "pay_test_ec11f8f0101442",
+    "order_id": "order_test_30ef4cb4feb24e",
+    "amount": 4482,
+    "currency": "INR",
+    "method": "card",
+    "error_code": "INSUFFICIENT_FUNDS",
+    "error_description": "Customer's account has insufficient balance",
+    "customer": {
+      "name": "Vikram Menon",
+      "email": "vikram.menon1@yahoo.in",
+      "phone": "+917585375496",
+      "language_pref": "hinglish"
+    },
+    "created_at": "2026-08-03T21:17:27.969359+00:00",
+    "retry_count": 2,
+    "subscription_id": "sub_test_f617c8559f6f43"
+  },
+  {
+    "payment_id": "pay_test_f46b30dcf63a4c",
+    "order_id": "order_test_7ccfceeef47b4a",
+    "amount": 411,
+    "currency": "INR",
+    "method": "netbanking",
+    "error_code": "INSUFFICIENT_FUNDS",
+    "error_description": "Customer's account has insufficient balance",
+    "customer": {
+      "name": "Avni Reddy",
+      "email": "avni.reddy77@hotmail.com",
+      "phone": "+917238543520",
+      "language_pref": "english"
+    },
+    "created_at": "2026-08-04T13:52:19.969386+00:00",
+    "retry_count": 3
+  },
+  {
+    "payment_id": "pay_test_63e84d7f1c3e44",
+    "order_id": "order_test_7c242a7d269d46",
+    "amount": 689,
+    "currency": "INR",
+    "method": "upi",
+    "error_code": "NETWORK_ERROR",
+    "error_description": "Network connectivity issue during transaction",
+    "customer": {
+      "name": "Deepa Deshpande",
+      "email": "deepa.deshpande56@rediffmail.com",
+      "phone": "+916833900238",
+      "language_pref": "telugu"
+    },
+    "created_at": "2026-08-14T03:18:26.969411+00:00",
+    "retry_count": 0
+  }
+]
