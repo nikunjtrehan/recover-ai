@@ -1,59 +1,47 @@
-<div align="center">
-
 # RecoverAI
 
-**Automated payment failure recovery for Razorpay merchants**
+**Payment-failure recovery with bounded actions and an inspectable audit trail.**
 
-*Razorpay AI Buildathon 2026 — Track 3: Revenue Recovery*
+[![Tests](https://github.com/nikunjtrehan/recover-ai/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/nikunjtrehan/recover-ai/actions/workflows/tests.yml)
 
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://python.org)
-[![Tests 47/47](https://img.shields.io/badge/Tests-47%2F47_passing-2ea44f)](tests/test_core.py)
-[![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Razorpay](https://img.shields.io/badge/Razorpay-SDK_v1.4-072654)](https://razorpay.com)
-[![Gemini](https://img.shields.io/badge/Gemini-3.5_Flash-4285F4?logo=google&logoColor=white)](https://ai.google.dev)
+Built for **Razorpay AI Buildathon 2026, Track 3: Revenue Recovery**. RecoverAI categorizes failed payments, selects a recovery action, generates a message in English, Hindi, or Hinglish, and records the decision in SQLite.
 
-[Quick Start](#setup) · [Architecture](#architecture) · [Evaluation](#evaluation-results) · [Website](https://nikunjtrehan.github.io/recover-ai/)
+**Python · FastAPI · Razorpay SDK · SQLite · Streamlit**
 
-</div>
+[Project overview](https://nikunjtrehan.github.io/recover-ai/) · [Setup](#setup) · [Architecture](#architecture) · [Tests](tests/test_core.py) · [Evaluation](#evaluation-and-evidence)
 
----
+> Hackathon prototype. Recovery outcomes in the evaluation are simulated; they do not measure recovered merchant revenue. The project overview is a static website. Run the Streamlit dashboard locally to explore the application.
 
-### The Problem
+## The engineering problem
 
-When a payment fails — card declined, UPI timeout, insufficient funds — merchants lose that sale. Current solutions retry blindly (card networks block you) or send generic English emails (single-digit open rates in India).
+A timeout, an expired card, and a suspected fraudulent payment need different responses. This project makes that routing explicit and keeps a record of why each action was selected.
 
-### The Insight
+| Component | Responsibility | Source |
+| --- | --- | --- |
+| Classification | Map configured error codes to transient, recoverable, terminal, or suspicious categories; optional trained RandomForest path | [classifier.py](src/classifier.py) |
+| Strategy | Select from six allowed actions, enforce retry limits, and route suspicious payments to human review | [recovery_agent.py](src/recovery_agent.py) |
+| Execution | Create an order or payment link, prepare a message, or add an escalation to the local human queue | [retry_engine.py](src/retry_engine.py) |
+| Messages | Generate English, Hindi, and Hinglish text from templates | [message_generator.py](src/message_generator.py) |
+| History | Store decisions, reasons, timestamps, and recorded outcomes | [audit.py](src/audit.py) |
+| Stopping rules | Check cooldowns, touchpoint limits, and prior recovery or escalation | [escalation.py](src/escalation.py) |
 
-**Not all failures are the same.** A UPI timeout (retry in 5 min) is fundamentally different from a stolen card flag (never retry, escalate immediately). Different failures need different recovery strategies, in the customer's language.
+## Architecture
 
-### The Architecture Decision
-
-No LLM in the transaction path. The hot path is pure Python, sub-5ms. The AI runs offline — reading yesterday's audit logs, rewriting tomorrow's Hinglish templates.
-
-```
-                         ┌──────────────────────────────────┐
-                         │     HOT PATH  (<5ms, no LLM)     │
-                         └──────────────────────────────────┘
-
-    Razorpay Webhook ──→ Classifier ──→ Rules Engine ──→ Message Gen ──→ Razorpay SDK
-    (payment.failed)     18 error       4 categories     English /      create_order()
-                         codes          6 bounded        Hindi /        create_payment_link()
-                         mapped         actions          Hinglish       escalate_to_human()
-                              │                                              │
-                              └──────────── SQLite Audit Trail ──────────────┘
-                                           (every decision logged)
-                                                    │
-                         ┌──────────────────────────────────┐
-                         │    COLD PATH  (daily, async)      │
-                         └──────────────────────────────────┘
-                                                    │
-                              Gemini 3.5 Flash reads audit logs
-                              Rewrites Hinglish templates with
-                              behavioral economics nudges
-                              Saves to optimized_templates.json
+```mermaid
+flowchart LR
+    Input[Payment failure] --> Classifier[Classify failure]
+    Classifier --> Strategy[Select and validate action]
+    Strategy --> Audit[SQLite audit trail]
+    Strategy --> Execute[Order / payment link / human queue]
+    Execute --> Message[Localized message]
+    Audit --> Dashboard[Streamlit dashboard]
+    Audit -. summarized activity .-> Optimizer[Optional offline AI script]
+    Optimizer --> Template[Generated Hinglish template]
 ```
 
----
+The default configuration sets `use_llm_in_hot_path=False`. Strategy selection uses rules without a model request. The classifier uses the error-code map unless a trained model has been loaded. The source also supports an optional synchronous LLM strategy path.
+
+The separate [offline optimizer](scripts/offline_optimizer.py) summarizes audit activity and requests a Hinglish template from Gemini. It is an optional script, not an automatically scheduled service, and no conversion improvement is established by this repository.
 
 ## Setup
 
@@ -81,15 +69,15 @@ source venv/bin/activate
 cp .env.example .env
 ```
 
-Install dependencies in the activated environment:
+Install dependencies:
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-Add your `GOOGLE_API_KEY` to `.env` if you want to use the optional offline optimizer.
+For a local mock run, keep `RAZORPAY_KEY_ID=rzp_test_placeholder` and `USE_LLM_IN_HOT_PATH=false`. The client factory selects the mock client for that placeholder ID; no Razorpay or AI credentials are needed for the default mock workflow. A configured Razorpay key selects the SDK client instead.
 
-Generate test data, run the evaluation, and launch the dashboard:
+Generate synthetic data, run the evaluation, and launch the dashboard:
 
 ```bash
 python data/generate_synthetic.py
@@ -97,147 +85,44 @@ python run_evaluation.py
 streamlit run app.py
 ```
 
-To run the tests, install pytest (it is not included in `requirements.txt`):
+Run the existing tests:
 
 ```bash
 python -m pip install pytest
 python -m pytest tests/ -v
 ```
 
----
+The [Tests workflow](.github/workflows/tests.yml) runs the suite on Python 3.11 with placeholder payment credentials and the synchronous LLM path disabled. Its badge reports the latest workflow result rather than a fixed passing-test count.
 
-## Evaluation Results
+## Evaluation and evidence
 
-Run `python run_evaluation.py` to reproduce. Measured on a held-out test set of 25 transactions.
+The repository includes an [error-code catalog](data/bank_error_codes.json), a [synthetic test set](data/synthetic_test_set.json), and an [evaluation script](run_evaluation.py).
 
-> **Methodology Note (Honest Reporting)**:
-> Classification uses deterministic mapping of all 18 standard Razorpay error codes to 4 failure categories. Rather than presenting a synthetic ML evaluation where precision/recall is tautologically 1.0 against its own lookup table, we report exact error-code coverage (18/18 codes mapped) and verify deterministic routing across the 25 held-out transactions.
+- **Routing:** the evaluation reports catalog coverage and category counts for synthetic transactions. Matching a lookup table to its own categories is not independent evidence of predictive ML accuracy.
+- **Recovery outcomes:** the script uses seeded random draws with assumed success probabilities for retry and payment-link actions. The resulting recovery percentage is a simulation output, not a measured business result.
+- **Tests:** the core suite exercises configuration, classification, action constraints, messages, audit storage, mock-client behavior, stopping rules, and combined recovery flows.
+- **Auditability:** decisions and recorded outcomes can be inspected in SQLite and through the local dashboard.
 
-**Error-Code Coverage & Routing:**
+See the [design notes](docs/architecture_and_defense.md) for additional project context; the implementation links above and explicit simulation methodology define the current scope.
 
-| Metric | Value | Detail |
-|---|---|---|
-| **Catalog coverage** | 18 / 18 codes (100.0%) | All standard Razorpay error codes mapped |
-| **Transient codes** | 6 codes | Gateway errors, server timeouts, network issues |
-| **Recoverable codes** | 6 codes | Insufficient funds, card declined, auth failed, limits |
-| **Terminal codes** | 4 codes | Bad request, expired card, invalid VPA, account closed |
-| **Suspicious codes** | 2 codes | Duplicate transaction, fraud suspected |
-| **Routing latency** | <0.05 ms | Deterministic dictionary lookup in hot path |
+## Current boundaries
 
-**Held-Out Test Set Routing (25 transactions):**
+- Creating a replacement order does not itself retry or collect a customer's payment. The retry action prepares a new order and message.
+- Generated message text and mock-client results do not establish delivery or payment completion.
+- The human escalation queue is in memory. Durable queueing and production deployment are outside this prototype's demonstrated scope.
+- The offline optimizer needs a model API key and an available configured model. Model calls and template quality are not covered by the mock core test suite.
+- Existing tests are component and mock-integration evidence, not a payment-provider certification or a complete security audit.
 
-| Category | Transactions | Share |
-|---|---|---|
-| transient | 12 | 48.0% |
-| recoverable | 8 | 32.0% |
-| terminal | 4 | 16.0% |
-| suspicious | 1 | 4.0% |
+## Repository map
 
-**Recovery Pipeline:**
-
-| Metric           | Value                    |
-|------------------|--------------------------|
-| Recovery rate    | 59.9% (simulated)        |
-| Amount recovered | Rs 52,816 / Rs 88,192    |
-| Escalation rate  | 20.0%                    |
-| Exceptions       | 6 / 25 unrecoverable     |
-
-> Recovery outcomes are simulated because Razorpay test mode cannot execute real retries. Routing and strategy selection are fully real.
-
----
-
-## Safety & Compliance
-
-| Guardrail | Implementation |
-|-----------|----------------|
-| **Bounded actions** | Only 6 actions in `config.ALLOWED_ACTIONS`. Agent cannot hallucinate a refund or issue credit. |
-| **Escalation chain** | retry → payment link → PayLater → human. Levels cannot be skipped. |
-| **Stopping rules** | Max 3 retries. 4-hour cooldown. Max 3 customer touchpoints. |
-| **Suspicious payments** | Always escalated to human review. No automated retry, ever. |
-| **Audit trail** | Every decision: payment_id, action, reasoning, confidence, timestamp, outcome. |
-| **No micro-credit** | Uses Razorpay PayLater (NBFC-compliant) instead of unauthorized credit. |
-
----
-
-## Message Samples
-
+```text
+server.py                 FastAPI webhook entry point
+app.py                    Streamlit dashboard
+config.py                 Settings and allowed actions
+src/                      Classification, recovery, messages, audit, SDK wrapper
+scripts/offline_optimizer.py  Optional AI template-generation script
+tests/test_core.py        Core tests and mock recovery flows
+data/                     Error-code catalog, synthetic inputs, templates
+run_evaluation.py         Routing analysis and simulated recovery outcomes
+docs/                     Project site and design notes
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│ HINGLISH (Card Declined)                                                │
-│ "Hi Rahul! Aapka Rs 1,499 ka payment process nahi ho paya.             │
-│  Koi baat nahi — is link se UPI se try karein: [link]"                  │
-├─────────────────────────────────────────────────────────────────────────┤
-│ HINDI (Bank Timeout)                                                    │
-│ "Namaste Amit! Bank timeout ki wajah se payment ruk gaya.              │
-│  Hum automatically retry kar rahe hain."                                │
-├─────────────────────────────────────────────────────────────────────────┤
-│ ENGLISH (Insufficient Funds)                                            │
-│ "Hi Priya! Your payment of Rs 2,499 failed due to low balance.         │
-│  Use Razorpay PayLater to clear it now and pay next month: [link]"     │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Project Structure
-
-```
-recover_ai/
-│
-├── server.py                  FastAPI webhook server
-├── app.py                     Streamlit monitoring dashboard
-├── config.py                  Settings, allowed actions, escalation chain
-├── run_evaluation.py          End-to-end evaluation on held-out test set
-│
-├── src/
-│   ├── classifier.py          RandomForest + rule-based fallback
-│   ├── recovery_agent.py      Strategy engine with guardrails
-│   ├── message_generator.py   English / Hindi / Hinglish templates
-│   ├── retry_engine.py        Executes actions via Razorpay SDK
-│   ├── escalation.py          Escalation chain + stopping rules
-│   ├── audit.py               SQLite audit trail
-│   └── razorpay_client.py     SDK wrapper + mock client for testing
-│
-├── scripts/
-│   └── offline_optimizer.py   Daily Gemini template optimization
-│
-├── tests/
-│   └── test_core.py           47 unit tests (all passing)
-│
-├── data/
-│   ├── bank_error_codes.json  18 Razorpay error codes → categories
-│   ├── generate_synthetic.py  Realistic Indian payment data generator
-│   └── optimized_templates.json  LLM-generated Hinglish templates
-│
-└── docs/
-    └── architecture_and_defense.md  Design decisions document
-```
-
-## Tech Stack
-
-| Component   | Choice               | Why                                              |
-|-------------|----------------------|--------------------------------------------------|
-| Server      | FastAPI + Uvicorn    | Async, fast, native Pydantic validation          |
-| Classifier  | scikit-learn (RF)    | Sub-millisecond inference, no GPU needed          |
-| LLM         | Gemini 3.5 Flash     | Offline only, free tier sufficient for batch work |
-| Payments    | Razorpay Python SDK  | Official SDK, test mode support                   |
-| Audit       | SQLite               | Zero config, single file, portable                |
-| Dashboard   | Streamlit + Plotly   | Rapid prototyping, built-in charting              |
-
-## Limitations (honest)
-
-- Recovery outcomes are simulated — Razorpay test mode does not support real payment retries
-- The ML classifier currently falls back to a lookup table — a trained model would improve on ambiguous error codes
-- SQLite will not scale past ~100 concurrent webhook writes — production would need PostgreSQL
-- Single-process server — production would need worker processes behind a load balancer
-- The offline optimizer requires a Gemini API key — without it, static templates still work
-
----
-
-<div align="center">
-
-**Built for Razorpay AI Buildathon 2026 — Track 3: Revenue Recovery**
-
-[Website](https://nikunjtrehan.github.io/recover-ai/) · [Architecture Doc](docs/architecture_and_defense.md)
-
-</div>
