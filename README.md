@@ -57,28 +57,51 @@ No LLM in the transaction path. The hot path is pure Python, sub-5ms. The AI run
 
 ## Setup
 
+Clone the repository and create a virtual environment:
+
 ```bash
 git clone https://github.com/nikunjtrehan/recover-ai.git
 cd recover-ai
-
 python -m venv venv
-venv\Scripts\activate        # Windows
-# source venv/bin/activate   # Linux/Mac
+```
 
-pip install -r requirements.txt
+Activate the environment and copy the example configuration for your shell.
 
-copy .env.example .env
-# Add your GOOGLE_API_KEY (for offline optimizer, optional)
+**Windows PowerShell**
 
-# Generate test data and run evaluation
+```powershell
+.\venv\Scripts\Activate.ps1
+Copy-Item .env.example .env
+```
+
+**Linux / macOS (Bash)**
+
+```bash
+source venv/bin/activate
+cp .env.example .env
+```
+
+Install dependencies in the activated environment:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Add your `GOOGLE_API_KEY` to `.env` if you want to use the optional offline optimizer.
+
+Generate test data, run the evaluation, and launch the dashboard:
+
+```bash
 python data/generate_synthetic.py
 python run_evaluation.py
-
-# Run tests
-python -m pytest tests/ -v
-
-# Launch dashboard
 streamlit run app.py
+```
+
+To run the tests, install pytest (it is not included in `requirements.txt`):
+
+```bash
+python -m pip install pytest
+python -m pytest tests/ -v
 ```
 
 ---
