@@ -4,7 +4,7 @@
 
 [![Tests](https://github.com/nikunjtrehan/recover-ai/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/nikunjtrehan/recover-ai/actions/workflows/tests.yml)
 
-Built for **Razorpay AI Buildathon 2026, Track 3: Revenue Recovery**. RecoverAI categorizes failed payments, selects a recovery action, generates a message in English, Hindi, or Hinglish, and records the decision in SQLite.
+Solo project by **Nikunj Trehan**, built for **Razorpay AI Buildathon 2026, Track 3: Revenue Recovery**. RecoverAI categorizes failed payments, selects a recovery action, generates a message in English, Hindi, or Hinglish, and records the decision in SQLite.
 
 **Python · FastAPI · Razorpay SDK · SQLite · Streamlit**
 
